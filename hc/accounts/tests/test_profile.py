@@ -18,7 +18,7 @@ class ProfileTestCase(BaseTestCase):
         self.alice.profile.refresh_from_db()
         token = self.alice.profile.token
         ### Assert that the token is set
-
+        self.assertEqual(self.alice.profile.token, token)
         ### Assert that the email was sent and check email content
 
     def test_it_sends_report(self):
