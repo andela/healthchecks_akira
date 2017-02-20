@@ -12,6 +12,9 @@ class CheckModelTestCase(TestCase):
 
         check.tags = " foo  bar "
         self.assertEquals(check.tags_list(), ["foo", "bar"])
+        check.tags = ""
+        self.assertEquals(check.tags_list(),[])
+
         ### Repeat above test for when check is an empty string
 
     def test_status_works_with_grace_period(self):
