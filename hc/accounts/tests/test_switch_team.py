@@ -15,7 +15,7 @@ class SwitchTeamTestCase(BaseTestCase):
 
         ### Assert the contents of r
 
-
+        assert r.status_code == 200 
     def test_it_checks_team_membership(self):
         self.client.login(username="charlie@example.org", password="password")
 

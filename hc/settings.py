@@ -18,10 +18,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOST = "localhost"
 SECRET_KEY = "---"
 DEBUG = True
-ALLOWED_HOSTS = []
-DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
+# ALLOWED_HOSTS = []
+# DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
 USE_PAYMENTS = False
-
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "daisywndungu@gmail.com"
+EMAIL_HOST_PASSWORD = "daliken1995"
+EMAIL_USE_TLS = True
 
 INSTALLED_APPS = (
     'django.contrib.admin',
