@@ -39,7 +39,8 @@ class SendAlertsTestCase(BaseTestCase):
         # Expect no exceptions--
         Command().handle_one(check)
 
-    # Assert when Command's handle many that when handle_many should return True
+    # Assert when Command's handle many that when handle_many should return
+    # True
     @patch("hc.api.management.commands.sendalerts.Command.handle_many")
     def test_handles_many_returns_true(self, mock):
         yesterday = timezone.now() - timedelta(days=1)
@@ -52,4 +53,3 @@ class SendAlertsTestCase(BaseTestCase):
             check.save()
         r = Command().handle_many()
         self.assertTrue(r)
-

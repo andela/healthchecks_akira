@@ -27,4 +27,4 @@ class ApiAdminTestCase(BaseTestCase):
 
         self.assertEqual(ch.kind, "pushbullet")
 
-        # Assert for the push bullet 
+        # Assert for the push bullet
