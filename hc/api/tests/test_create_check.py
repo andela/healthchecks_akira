@@ -64,7 +64,8 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_handles_invalid_json(self):
         # Make the post request with invalid json data type
-        r = self.client.post(self.URL, {"invalid json": "data"}, HTTP_X_API_KEY="abc",
+        r = self.client.post(self.URL, {"invalid json": "data"},
+                             HTTP_X_API_KEY="abc",
                              content_type="application/json")
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "could not parse request body")
