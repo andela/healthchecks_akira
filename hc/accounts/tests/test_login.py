@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
 from hc.api.models import Check
-
+from hc.accounts.models import Profile
 
 class LoginTestCase(TestCase):
 
@@ -13,15 +13,15 @@ class LoginTestCase(TestCase):
         session = self.client.session
         session["welcome_code"] = str(check.code)
         session.save()
-
+        self.assertEqual(Profile.objects.count(), 0)
+        # count before
         form = {"email": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302
 
         ### Assert that a user was created
-        # r = self.client.post("/accounts/login/", form)
-        # self.assertEqual(r.status_code, 302)
+        self.assertEqual(Profile.objects.count(), 1)
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Log in to healthchecks.io')
