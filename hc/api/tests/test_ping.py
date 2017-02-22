@@ -75,3 +75,4 @@ class PingTestCase(TestCase):
     ### Test that when a ping is made a check with a paused status changes status
     ### Test that a post to a ping works
     ### Test that the csrf_client head works
+    
