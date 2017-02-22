@@ -84,5 +84,11 @@ class PingTestCase(TestCase):
         self.check.refresh_from_db()
         ping = Ping.objects.latest("id")
         self.assertEqual(self.check.status, "up")
+    
+    def test_it_works_with_post_request(self):
+        r = self.client.post("/ping/%s/" % self.check.code)
+        self.assertEqual(r.status_code,200)
+
+    
 
     
