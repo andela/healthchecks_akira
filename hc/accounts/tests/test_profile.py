@@ -1,7 +1,7 @@
 from django.core import mail
 
 from hc.test import BaseTestCase
-from hc.accounts.models import Member
+from hc.accounts.models import Member, Profile
 from hc.api.models import Check
 
 
@@ -120,3 +120,8 @@ class ProfileTestCase(BaseTestCase):
         self.assertNotContains(r, "bobs-tag.svg")
 
     ### Test it creates and revokes API key
+    def test_it_creates_and_revokes_api_key(self):
+        self.profile = Profile(user=self.bob, api_key="newAp1Key")
+        self.assertEqual(self.profile.api_key, "newAp1Key")
+        self.profile = Profile(user=self.bob, api_key="")
+        self.assertEqual(self.profile.api_key, "")

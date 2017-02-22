@@ -20,8 +20,8 @@ class LoginTestCase(TestCase):
         assert r.status_code == 302
 
         ### Assert that a user was created
-       
-
+        # r = self.client.post("/accounts/login/", form)
+        # self.assertEqual(r.status_code, 302)
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Log in to healthchecks.io')
