@@ -51,10 +51,10 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_accepts_api_key_in_header(self):
         payload = json.dumps({"name": "Foo"})
 
-        ### Make the post request and get the response
-        r = {'status_code': 201} ### This is just a placeholder variable
-
-        self.assertEqual(r['status_code'], 201)
+        # Make the post request and get the response
+        r = self.client.post(self.URL, payload, HTTP_X_API_KEY="abc",
+                             content_type="application/json")
+        self.assertEqual(r.status_code, 201)
 
     def test_it_handles_missing_request_body(self):
         ### Make the post request with a missing body and get the response
