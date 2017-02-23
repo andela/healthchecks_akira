@@ -21,7 +21,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(self.alice.profile.token, token)
         ### Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox),1)
-        assert "link" in mail.outbox[0].body
+        self.assertIn("link", mail.outbox[0].body)
 
     def test_it_sends_report(self):
         check = Check(name="Test Check", user=self.alice)
@@ -34,7 +34,7 @@ class ProfileTestCase(BaseTestCase):
         ##checks the contents of the email subject
         self.assertEqual(mail.outbox[0].subject, 'Monthly Report')
         ##checks the contents of the email body
-        assert "monthly report" in mail.outbox[0].body
+        self.assertIn("monthly report", mail.outbox[0].body)
 
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
@@ -56,14 +56,14 @@ class ProfileTestCase(BaseTestCase):
         ##checks the contents of the email subject
         self.assertEqual(mail.outbox[0].subject, 'You have been invited to join alice@example.org on healthchecks.io')
         ##checks the contents of the email body
-        assert "Hello,\n\nalice@example.org invites you" in mail.outbox[0].body
+        self.assertIn( "Hello,\n\nalice@example.org invites you", mail.outbox[0].body)
 
     def test_add_team_member_checks_team_access_allowed_flag(self):
         self.client.login(username="charlie@example.org", password="password")
 
         form = {"invite_team_member": "1", "email": "frank@example.org"}
         r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 403)
 
     def test_it_removes_team_member(self):
         self.client.login(username="alice@example.org", password="password")
@@ -121,7 +121,7 @@ class ProfileTestCase(BaseTestCase):
 
     ### Test it creates and revokes API key
     def test_it_creates_and_revokes_api_key(self):
-        self.profile = Profile(user=self.bob, api_key="newAp1Key")
-        self.assertEqual(self.profile.api_key, "newAp1Key")
-        self.profile = Profile(user=self.bob, api_key="")
-        self.assertEqual(self.profile.api_key, "")
+        self.assertTrue(self.profile.set_api_key)
+        self.profile.set_api_key = ''
+        self.profile.save()
+        self.assertTrue(self.profile.api_key, '')

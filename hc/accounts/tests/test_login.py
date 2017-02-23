@@ -13,10 +13,7 @@ class LoginTestCase(TestCase):
         session = self.client.session
         session["welcome_code"] = str(check.code)
         session.save()
-        self.assertEqual(Profile.objects.count(), 0)
-        # count before
         form = {"email": "alice@example.org"}
-
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302
 
@@ -26,7 +23,7 @@ class LoginTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Log in to healthchecks.io')
         ### Assert contents of the email body
-        assert "To log into healthchecks.io" in mail.outbox[0].body
+        self.assertIn( "Hello,\n\nTo log into healthchecks.io, please open the link below:", mail.outbox[0].body)
         ### Assert that check is associated with the new user
         self.assertEqual(mail.outbox[0].to, ["alice@example.org"])
 

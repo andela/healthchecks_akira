@@ -30,7 +30,7 @@ class CheckTokenTestCase(BaseTestCase):
         self.assertRedirects(response,'/checks/')
     ### Login with a bad token and check that it redirects
     def test_bad_token(self):
-        self.client.login(username="alice", password="secret-token")                            # This do the login work
+        self.client.login(username="alice", password="secret-token")           # This does the login work
         response = self.client.post('/accounts/check_token/alice/bad-token/', follow=True)
         self.assertRedirects(response,'/accounts/login/')
 
