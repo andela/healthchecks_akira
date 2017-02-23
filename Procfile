@@ -1,0 +1,1 @@
+web: gunicorn hc.wsgi --pythonpath=healthchecks-akira --log-file -

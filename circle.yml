@@ -1,0 +1,24 @@
+machine:
+    python:
+        version: 3.5.2
+dependencies:
+    pre:
+        - pip install -r requirements.txt
+        - pip install mock
+test:
+    override:
+        - python manage.py migrate
+        - python manage.py test
+
+deployment:
+  staging:
+    branch: develop
+    commands:
+      - git fetch origin --unshallow
+      - git push -f git@heroku.com:healthchecks-akira.git $CIRCLE_SHA1:master
+      - heroku run python manage.py collectstatic --noinput --settings=hc.settings --app healthchecks-akira
+      - heroku run python manage.py makemigrations --settings=hc.settings --app healthchecks-akira
+      - heroku run python manage.py migrate auth --noinput --settings=hc.settings --app healthchecks-akira
+      - heroku run python manage.py migrate --settings=hc.settings --app healthchecks-akira
+      - heroku run python manage.py syncdb --noinput --settings=hc.settings --app healthchecks-akira
+      - heroku ps:scale web=1 --app healthchecks-akira
