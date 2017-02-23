@@ -90,6 +90,6 @@ class ListChecksTestCase(BaseTestCase):
 
     # Test that it accepts an api_key in the request
     def test_it_accepts_api_key_in_request(self):
-        r = self.client.get("/api/v1/checks/", HTTP_X_API_KEY="abc")
+        r = self.get()
 
         self.assertEqual(r.status_code, 200)
