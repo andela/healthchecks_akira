@@ -8,7 +8,6 @@ Django==1.10.5
 django-appconf==1.0.1
 django-compressor==2.1
 django-ses-backend==0.1.1
-django_compressor==2.1
 djmail==0.11.0
 futures==3.0.3
 gunicorn==19.6.0
@@ -21,7 +20,6 @@ psycopg2==2.6.2
 pyparsing==2.1.10
 python-dateutil==2.6.0
 pytz==2016.7
-psycopg2==2.6.1
 rcssmin==1.0.6
 requests==2.9.1
 rjsmin==1.0.12
