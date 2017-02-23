@@ -17,7 +17,8 @@ class ApiAdminTestCase(BaseTestCase):
         # Set Alice to be staff and superuser and save her :)
 
     def test_it_shows_channel_list_with_pushbullet(self):
-        self.client.login(username='alice@example.com', password="password")
+        self.client.login(username=self.alice.email, password="password")
+
 
         ch = Channel(user=self.alice, kind="pushbullet", value="test-token")
         ch.save()
