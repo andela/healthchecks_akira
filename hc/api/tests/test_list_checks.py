@@ -33,6 +33,7 @@ class ListChecksTestCase(BaseTestCase):
 
     def test_it_works(self):
         r = self.get()
+
         self.assertEqual(r.status_code, 200)
         # Assert the response status code
 
@@ -86,8 +87,6 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(len(data["checks"]), 2)
         for check in data["checks"]:
             self.assertNotEqual(check["name"], "Bob 1")
-
-        r = self.get
 
     # Test that it accepts an api_key in the request
     def test_it_accepts_api_key_in_request(self):
