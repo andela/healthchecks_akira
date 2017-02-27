@@ -5,6 +5,7 @@ from hc.test import BaseTestCase
 
 @override_settings(PUSHOVER_API_TOKEN="token", PUSHOVER_SUBSCRIPTION_URL="url")
 class AddPushoverTestCase(BaseTestCase):
+
     def test_it_adds_channel(self):
         self.client.login(username="alice@example.org", password="password")
 
@@ -37,7 +38,7 @@ class AddPushoverTestCase(BaseTestCase):
         r = self.client.get("/integrations/add_pushover/?%s" % params)
         assert r.status_code == 403
 
-    ### Test that pushover validates priority
+    # Test that pushover validates priority
     def test_pushover_validates_priority(self):
         self.client.login(username="alice@example.org", password="password")
 
@@ -48,9 +49,3 @@ class AddPushoverTestCase(BaseTestCase):
         params = "pushover_user_key=a&nonce=n"
         r = self.client.get("/integrations/add_pushover/?%s" % params)
         self.assertEqual(r.status_code, 400)
-
-
-
-
-
-
