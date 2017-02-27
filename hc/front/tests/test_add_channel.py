@@ -41,7 +41,8 @@ class AddChannelTestCase(BaseTestCase):
     def test_team_access_works(self):
         url = "/integrations/add/"
         form = {"kind": "slack", "value": {"team_name": "Andela"}}
-        self.client.login(username="alice@example.org", password="password")
+        #using bob
+        self.client.login(username="bob@example.org", password="password")
         r = self.client.post(url, form)
         self.assertRedirects(r, "/integrations/")
         self.assertEqual(Channel.objects.count(), 1)
