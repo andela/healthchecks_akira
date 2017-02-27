@@ -1,5 +1,8 @@
 from hc.api.models import Check
+
 from hc.test import BaseTestCase
+from hc.api.models import Channel
+
 
 
 class AddCheckTestCase(BaseTestCase):
@@ -12,3 +15,10 @@ class AddCheckTestCase(BaseTestCase):
         assert Check.objects.count() == 1
 
     ### Test that team access works
+    def test_team_access_works(self):
+        url = "/checks/add/"
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url)
+        self.assertEqual(Check.objects.count(), 1)
+        
+
