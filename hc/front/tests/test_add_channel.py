@@ -37,5 +37,17 @@ class AddChannelTestCase(BaseTestCase):
             r = self.client.get(url)
             self.assertContains(r, "Integration Settings", status_code=200)
 
+    def test_team_access_works(self):
+        url = "/integrations/add/"
+        form = {"kind": "slack", "value": {"team_name": "Andela"}}
+        self.client.login(username="alice@example.org", password="password")
+        import pdb; pdb.set_trace()
+        r = self.client.post(url, form)
+        self.assertRedirects(r, "/integrations/")
+        
+        self.assertEqual(Channel.objects.count(), 1)
+
+
+
     ### Test that the team access works
     ### Test that bad kinds don't work
