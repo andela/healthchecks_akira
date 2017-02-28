@@ -569,9 +569,8 @@ def failed_jobs(request):
             if tag == "":
                 continue
 
-            counter[tag] += 1
-
             if status == "down":
+                counter[tag] += 1
                 down_tags.add(tag)
         if status == "down":
             down_checks.append(check)
