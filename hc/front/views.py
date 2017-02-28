@@ -585,4 +585,4 @@ def failed_jobs(request):
         "ping_endpoint": settings.PING_ENDPOINT
     }
 
-    return render(request, "front/failed_jobs.html")
+    return render(request, "front/failed_jobs.html", ctx)
