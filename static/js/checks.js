@@ -88,7 +88,7 @@ $(function () {
         $("#update-timeout-grace").val(rounded);
     });
 
-     var nagSlider = document.getElementById("nag-slider");
+    var nagSlider = document.getElementById("nag-slider");
     noUiSlider.create(nagSlider, {
         start: [20],
         connect: "lower",
@@ -110,7 +110,8 @@ $(function () {
         }
     });
 
-     nagSlider.noUiSlider.on("update", function(a, b, value) {
+       
+    nagSlider.noUiSlider.on("update", function(a, b, value) {
         var rounded = Math.round(value);
         $("#nag-slider-value").text(secsToText(rounded));
         $("#update-timeout-nag").val(rounded);

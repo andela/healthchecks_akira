@@ -18,7 +18,7 @@ HOST = "localhost"
 SECRET_KEY = "---"
 DEBUG = True
 ALLOWED_HOSTS = []
-DEFAULT_FROM_EMAIL = 'didacus.abongo@andela.com'
+DEFAULT_FROM_EMAIL = 'maryanne.nganga@andela.com'
 USE_PAYMENTS = False
 
 
