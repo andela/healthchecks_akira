@@ -38,7 +38,7 @@ class SendAlertsTestCase(BaseTestCase):
 
         # Expect no exceptions--
         Command().handle_one(check)
-
+        
     # Assert when Command's handle many that when handle_many should return
     # True
     @patch("hc.api.management.commands.sendalerts.Command.handle_many")
