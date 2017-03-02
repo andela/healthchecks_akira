@@ -17,7 +17,8 @@ STATUSES = (
     ("up", "Up"),
     ("down", "Down"),
     ("new", "New"),
-    ("paused", "Paused")
+    ("paused", "Paused"),
+    ("unresolved", "unresolved")
 )
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
@@ -40,7 +41,7 @@ class Check(models.Model):
 
     class Meta:
         # sendalerts command will query using these
-        index_together = ["status", "user", "alert_after"]
+        index_together = ["status", "user", "alert_after","nag_after"]
 
     name = models.CharField(max_length=100, blank=True)
     tags = models.CharField(max_length=500, blank=True)
@@ -53,6 +54,7 @@ class Check(models.Model):
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
+    nag_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
 
     def name_then_code(self):
@@ -71,7 +73,7 @@ class Check(models.Model):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
 
     def send_alert(self):
-        if self.status not in ("up", "down"):
+        if self.status not in ("up", "down","unresolved"):
             raise NotImplementedError("Unexpected status: %s" % self.status)
 
         errors = []
@@ -90,8 +92,21 @@ class Check(models.Model):
 
         if self.last_ping + self.timeout + self.grace > now:
             return "up"
+        else:
+            if self.last_ping + self.timeout + self.grace + self.nag > now:
+                return "unresolved"
 
-        return "down"
+            return "down"
+    
+    def in_nag_period(self):
+         
+        if self.status in ("new", "paused"):
+            return False
+
+        up_ends = self.last_ping + self.timeout 
+        grace_ends = up_ends + self.grace
+        nag_ends = grace_ends + self.nag
+        return grace_ends < timezone.now() < nag_ends
 
     def in_grace_period(self):
         if self.status in ("new", "paused"):

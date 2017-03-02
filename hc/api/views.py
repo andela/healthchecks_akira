@@ -113,5 +113,9 @@ def badge(request, username, signature, tag):
             status = "down"
             break
 
+        if check.get_status() == "unresolved":
+            status = "unresolved"
+            break
+
     svg = get_badge_svg(tag, status)
     return HttpResponse(svg, content_type="image/svg+xml")
