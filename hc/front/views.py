@@ -556,32 +556,22 @@ def terms(request):
 
 # Failed Jobs
 @login_required
-def failed_jobs(request):
+def failed_checks(request):
     q = Check.objects.filter(user=request.team.user).order_by("created")
     checks = list(q)
-
-    counter = Counter()
-    down_tags = set()
-    down_checks = []
-    for check in checks:
-        status = check.get_status()
+    down_checks = [check for check in checks if check.get_status() == 'down']
+    down_tags = set()  # [tag for tag in down_checks.tags_list() if tag != '']
+    for check in down_checks:
         for tag in check.tags_list():
-            if tag == "":
-                continue
-
-            if status == "down":
-                counter[tag] += 1
-                down_tags.add(tag)
-        if status == "down":
-            down_checks.append(check)
+            down_tags.add(tag)
 
     ctx = {
         "page": "failed",
         "checks": down_checks,
         "now": timezone.now(),
-        "tags": counter.most_common(),
+        "tags": Counter(down_tags).most_common(),
         "down_tags": down_tags,
         "ping_endpoint": settings.PING_ENDPOINT
     }
 
-    return render(request, "front/failed_jobs.html", ctx)
+    return render(request, "front/failed_checks.html", ctx)
