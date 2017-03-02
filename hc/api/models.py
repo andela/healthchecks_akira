@@ -94,9 +94,9 @@ class Check(models.Model):
             return "up"
         else:
             if self.last_ping + self.timeout + self.grace + self.nag > now:
-                return "unresolved"
+                return "down"
 
-            return "down"
+            return "unresolved"
     
     def in_nag_period(self):
          
