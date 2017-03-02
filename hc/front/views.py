@@ -560,7 +560,7 @@ def failed_checks(request):
     q = Check.objects.filter(user=request.team.user).order_by("created")
     checks = list(q)
     down_checks = [check for check in checks if check.get_status() == 'down']
-    down_tags = set()  # [tag for tag in down_checks.tags_list() if tag != '']
+    down_tags = set() 
     for check in down_checks:
         for tag in check.tags_list():
             down_tags.add(tag)
