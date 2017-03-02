@@ -77,7 +77,7 @@
                         <a href="{% url 'hc-checks' %}">Checks</a>
                     </li>
                     <li {% if page == 'failed' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-failed-jobs' %}">Failed Jobs</a>
+                        <a href="{% url 'hc-failed-checks' %}">Failed Checks</a>
                     </li>
                     <li {% if page == 'channels' %} class="active" {% endif %}>
                         <a href="{% url 'hc-channels' %}">Integrations</a>

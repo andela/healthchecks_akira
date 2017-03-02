@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^checks/add/$', views.add_check, name="hc-add-check"),
     url(r'^checks/([\w-]+)/', include(check_urls)),
     url(r'^integrations/', include(channel_urls)),
-    url(r'^failed/$', views.failed_jobs, name="hc-failed-jobs"),
+    url(r'^failed/$', views.failed_checks, name="hc-failed-checks"),
 
     url(r'^docs/$', views.docs, name="hc-docs"),
     url(r'^docs/api/$', views.docs_api, name="hc-docs-api"),
