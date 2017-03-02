@@ -32,7 +32,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertContains(r, "label-success")
 
     def test_it_shows_red_check(self):
-        self.check.last_ping = timezone.now() - td(days=3)
+        self.check.last_ping = timezone.now() - td(days=1, hours=2)
         self.check.status = "up"
         self.check.save()
 
@@ -58,3 +58,14 @@ class MyChecksTestCase(BaseTestCase):
 
         # Mobile
         self.assertContains(r, "label-warning")
+
+    def test_it_shows_blue_check(self):
+        self.check.last_ping = timezone.now() - td(days=3)
+        self.check.status = "up"
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/")
+
+        # Desktop
+        self.assertContains(r, "icon-unresolved")
