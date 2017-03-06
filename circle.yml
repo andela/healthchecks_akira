@@ -8,6 +8,7 @@ dependencies:
 test:
     override:
         - python manage.py migrate
+        - python manage.py collectstatic --noinput
         - python manage.py test
 
 deployment:
@@ -15,7 +16,7 @@ deployment:
     branch: develop
     commands:
       - git fetch origin --unshallow
-      - git push -f git@heroku.com:healthchecks-akira.git $CIRCLE_SHA1:refs/heads/master
+      - git push -f git@heroku.com:healthchecks-akira.git $CIRCLE_SHA1:master
       - heroku run python manage.py collectstatic --noinput --settings=hc.settings --app healthchecks-akira
       - heroku run python manage.py makemigrations --settings=hc.settings --app healthchecks-akira
       - heroku run python manage.py migrate auth --noinput --settings=hc.settings --app healthchecks-akira
