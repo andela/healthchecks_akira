@@ -1,0 +1,11 @@
+{% extends "front/my_checks.html" %}
+{% load compress staticfiles %}
+
+{% block title %}
+My Failed Jobs - healthchecks.io
+{% endblock %}
+{% block header %}Failed Checks{% endblock %}
+{% block alert_info %}
+    <div class="alert alert-info">You don't have any failed checks yet.</div>
+{% endblock %}
+{% block add_button %} {% endblock %}
