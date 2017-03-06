@@ -55,7 +55,7 @@ class Check(models.Model):
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     nag_after = models.DateTimeField(null=True, blank=True, editable=False)
-    status = models.CharField(max_length=6, choices=STATUSES, default="new")
+    status = models.CharField(max_length=10, choices=STATUSES, default="new")
 
     def name_then_code(self):
         if self.name:
