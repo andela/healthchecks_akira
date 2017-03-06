@@ -9,7 +9,7 @@
     <div class="col-sm-12">
         <h1>
         {% if request.team == request.user.profile %}
-            My Checks
+            {% block header %}My Checks{% endblock %}
         {% else %}
             {{ request.team.team_name }}
         {% endif %}
@@ -30,6 +30,7 @@
     {% endif %}
 
 </div>
+
 <div class="row">
     <div class="col-sm-12">
 
@@ -38,19 +39,22 @@
         {% include "front/my_checks_mobile.html" %}
         {% include "front/my_checks_desktop.html" %}
     {% else %}
-    <div class="alert alert-info">You don't have any checks yet.</div>
+    {% block alert_info %}
+        <div class="alert alert-info">You don't have any checks yet.</div>
+    {% endblock %}
     {% endif %}
     </div>
 </div>
-<div class="row">
-    <div class="col-sm-12">
-        <form method="post" action="{% url 'hc-add-check' %}" class="text-center">
-            {% csrf_token %}
-            <input type="submit" class="btn btn-primary btn-lg" value="Add Check">
-        </form>
+{% block add_button %}
+    <div class="row">
+        <div class="col-sm-12">
+            <form method="post" action="{% url 'hc-add-check' %}" class="text-center">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary btn-lg" value="Add Check">
+            </form>
+        </div>
     </div>
-</div>
-
+{% endblock %}
 <div id="update-name-modal" class="modal">
     <div class="modal-dialog">
         <form id="update-name-form" class="form-horizontal" method="post">

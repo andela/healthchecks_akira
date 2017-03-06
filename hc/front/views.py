@@ -552,3 +552,23 @@ def privacy(request):
 
 def terms(request):
     return render(request, "front/terms.html", {})
+
+
+# Failed Jobs
+@login_required
+def failed_checks(request):
+    q = Check.objects.filter(user=request.team.user).order_by("created")
+    checks = list(q)
+    down_checks = [check for check in checks if check.get_status() == 'down']
+    down_tags = set((tag for down_check in down_checks for tag in down_check.tags_list()))
+
+    ctx = {
+        "page": "failed",
+        "checks": down_checks,
+        "now": timezone.now(),
+        "tags": Counter(down_tags).most_common(),
+        "down_tags": down_tags,
+        "ping_endpoint": settings.PING_ENDPOINT
+    }
+
+    return render(request, "front/failed_checks.html", ctx)
