@@ -560,8 +560,7 @@ def failed_checks(request):
     q = Check.objects.filter(user=request.team.user).order_by("created")
     checks = list(q)
     down_checks = [check for check in checks if check.get_status() == 'down']
-    down_tags = set((tag for down_check in down_checks for check in checks if
-                    check.get_status() == 'down' for tag in check.tags_list()))
+    down_tags = set((tag for down_check in down_checks for tag in down_check.tags_list()))
 
     ctx = {
         "page": "failed",
