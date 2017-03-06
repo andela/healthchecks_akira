@@ -57,3 +57,15 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(url, data=payload)
         assert r.status_code == 403
+
+    def test_it_handles_3_months_timeout_and_grace(self):
+        url = "/checks/%s/timeout/" % self.check.code
+        payload = {"timeout": 3888000, "grace": 3888000}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url, data=payload)
+        self.assertRedirects(r, "/checks/")
+
+        check = Check.objects.get(code=self.check.code)
+        self.assertEqual(check.timeout.total_seconds(), 3888000)
+        self.assertEqual(check.grace.total_seconds(),3888000)
