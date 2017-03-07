@@ -84,20 +84,28 @@ TEST_RUNNER = 'hc.api.tests.CustomRunner'
 
 # Default database engine is SQLite. So one can just check out code,
 # install requirements.txt and do manage.py runserver and it works
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE':   'django.db.backends.postgresql',
+        'NAME':     os.getenv("hc_db", None),
+        'USER':     os.getenv('hc_db_user', None),
+        'PASSWORD': os.getenv('hc_db_pass', None),
+        'TEST': {'CHARSET': 'UTF8'}
+    }
+}
 
-DATABASES['default'] = dj_database_url.parse('sqlite:///{BASE_DIR}/hc.sqlite'.format(BASE_DIR=BASE_DIR), conn_max_age=600)
+# DATABASES['default'] = dj_database_url.parse('sqlite:///{BASE_DIR}/hc.sqlite'.format(BASE_DIR=BASE_DIR), conn_max_age=600)
 
 # You can switch database engine to postgres or mysql using environment
 # variable 'DB'. Travis CI does this.
-if os.environ.get("DB") == "postgres":
-    DATABASES['default'] = dj_database_url.parse('postgres://postgres:@localhost:5432/hc', conn_max_age=600)
+# if os.environ.get("DB") == "postgres":
+#     DATABASES['default'] = dj_database_url.parse('postgres://postgres:@localhost:5432/hc', conn_max_age=600)
 
-if os.environ.get("DB") == "mysql":
-    DATABASES['default'] = dj_database_url.parse('mysql://root:@localhost:5432/hc', conn_max_age=600)
+# if os.environ.get("DB") == "mysql":
+#     DATABASES['default'] = dj_database_url.parse('mysql://root:@localhost:5432/hc', conn_max_age=600)
 
-if os.environ.get('DATABASE_URL', None):
-    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600)
+# if os.environ.get('DATABASE_URL', None):
+#     DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600)
 
 
 LANGUAGE_CODE = 'en-us'
@@ -125,6 +133,12 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 COMPRESS_OFFLINE = True
 
 EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
+DJMAIL_REAL_BACKEND = 'django_ses.SESBackend'
+DEFAULT_FROM_EMAIL = os.getenv("hc_email", None)
+AWS_SES_ACCESS_KEY_ID = os.getenv("AWS_SES_ACCESS_KEY_ID", None)
+AWS_SES_SECRET_ACCESS_KEY = os.getenv("AWS_SES_SECRET_ACCESS_KEY", None)
+AWS_SES_REGION_NAME = 'us-east-1'
+AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
 
 # Slack integration -- override these in local_settings
 SLACK_CLIENT_ID = None
