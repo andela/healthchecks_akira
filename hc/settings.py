@@ -19,6 +19,8 @@ SECRET_KEY = "---"
 DEBUG = True
 ALLOWED_HOSTS = [
     'healthchecks-akira.herokuapp.com',
+    'localhost',
+    '127.0.0.1',
 ]
 DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
 USE_PAYMENTS = False
