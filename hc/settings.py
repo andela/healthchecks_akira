@@ -20,7 +20,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'healthchecks-akira.herokuapp.com',
 ]
-DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
+DEFAULT_FROM_EMAIL = 'maryanne.nganga@andela.com'
 USE_PAYMENTS = False
 
 
