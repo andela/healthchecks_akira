@@ -15,12 +15,11 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 HOST = "localhost"
-SECRET_KEY = "---"
+SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 ALLOWED_HOSTS = [
-    'healthchecks-akira.herokuapp.com',
+    '*'
 ]
-DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
 USE_PAYMENTS = False
 
 
@@ -113,7 +112,7 @@ PING_ENDPOINT = SITE_ROOT + "/ping/"
 PING_EMAIL_DOMAIN = HOST
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static-collected')
+STATIC_ROOT = os.path.join(BASE_DIR, "static-collected")
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -121,8 +120,14 @@ STATICFILES_FINDERS = (
 )
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 COMPRESS_OFFLINE = True
+COMPRESS_ENABLED = False if os.getenv("CIRCLECI", None) else True
 
-EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
+EMAIL_BACKEND = os.getenv("DJMAIL_REAL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "healthchecks@example.org")
+AWS_SES_ACCESS_KEY_ID = os.getenv("AWS_SES_ACCESS_KEY_ID", None)
+AWS_SES_SECRET_ACCESS_KEY = os.getenv("AWS_SES_SECRET_ACCESS_KEY", None)
+AWS_SES_REGION_NAME = "us-east-1"
+AWS_SES_REGION_ENDPOINT = "email.us-east-1.amazonaws.com"
 
 # Slack integration -- override these in local_settings
 SLACK_CLIENT_ID = None
