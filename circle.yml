@@ -14,7 +14,6 @@ test:
     override:
         - python manage.py migrate
         - python manage.py collectstatic --noinput --settings=hc.settings
-        - python manage.py compress
         - python manage.py test
 
 deployment:

@@ -124,7 +124,7 @@ STATICFILES_FINDERS = (
 )
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 COMPRESS_OFFLINE = True
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False if os.getenv('CIRCLECI', None) else True
 
 EMAIL_BACKEND = os.getenv('DJMAIL_REAL_BACKEND', "django.core.mail.backends.smtp.EmailBackend")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", None)
