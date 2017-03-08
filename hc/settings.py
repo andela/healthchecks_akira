@@ -11,16 +11,17 @@ import os
 import warnings
 
 import dj_database_url
+from boto.ses.connection import SESConnection
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# SES = SESConnection(os.environ['AWS_SES_ACCESS_KEY_ID'], os.environ['AWS_SES_SECRET_ACCESS_KEY'])
 HOST = "localhost"
 SECRET_KEY = "---"
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = [
     'healthchecks-akira.herokuapp.com',
-    'localhost',
-    '127.0.0.1',
+    '*'
 ]
 DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
 USE_PAYMENTS = False
@@ -85,13 +86,11 @@ TEST_RUNNER = 'hc.api.tests.CustomRunner'
 # Default database engine is SQLite. So one can just check out code,
 # install requirements.txt and do manage.py runserver and it works
 DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.postgresql',
-        'NAME':     os.getenv("hc_db", None),
-        'USER':     os.getenv('hc_db_user', None),
-        'PASSWORD': os.getenv('hc_db_pass', None),
-        'TEST': {'CHARSET': 'UTF8'}
-    }
+    'default':
+    dj_database_url.parse
+    (
+        'postgres://postgres:@localhost:5432/hc', conn_max_age=600
+    )
 }
 
 # DATABASES['default'] = dj_database_url.parse('sqlite:///{BASE_DIR}/hc.sqlite'.format(BASE_DIR=BASE_DIR), conn_max_age=600)
