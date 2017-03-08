@@ -130,6 +130,7 @@ STATICFILES_FINDERS = (
 )
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 COMPRESS_OFFLINE = True
+COMPRESS_ENABLED = True
 
 EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
 DJMAIL_REAL_BACKEND = 'django_ses.SESBackend'
