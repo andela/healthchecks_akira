@@ -5,10 +5,18 @@ dependencies:
     pre:
         - pip install -r requirements.txt
         - pip install mock
+
+database:
+  override:
+    - psql -u ubuntu circle_test < hc-setup.psql
+
 test:
     override:
+        - psql --user postgres 
+            postgres=# create database hc;
         - python manage.py migrate
         - python manage.py collectstatic --noinput --settings=hc.settings
+        - python manage.py compress
         - python manage.py test
 
 deployment:
