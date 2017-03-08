@@ -8,7 +8,10 @@ dependencies:
 
 database:
   override:
-    - psql -u ubuntu circle_test < hc-setup.psql
+    - sudo -u postgres dropuser -p 5432 postgres		
+    - sudo -u postgres createuser -p 5432 postgres
+    - sudo -u postgres createdb -p 5432 -O postgres hc
+    - sudo -u postgres psql -p 5432 --command="ALTER USER postgres superuser"
 
 test:
     override:
