@@ -7,11 +7,8 @@ dependencies:
         - pip install mock
 
 database:
-  override:
-    - sudo -u postgres dropuser -p 5432 postgres		
-    - sudo -u postgres createuser -p 5432 postgres
-    - sudo -u postgres createdb -p 5432 -O postgres hc
-    - sudo -u postgres psql -p 5432 --command="ALTER USER postgres superuser"
+    override:
+        - sudo -u postgres createdb -p 5432 -O postgres hc
 
 test:
     override:
