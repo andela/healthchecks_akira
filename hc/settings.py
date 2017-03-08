@@ -17,8 +17,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SES = SESConnection(os.environ['AWS_SES_ACCESS_KEY_ID'], os.environ['AWS_SES_SECRET_ACCESS_KEY'])
 HOST = "localhost"
-SECRET_KEY = "---"
-DEBUG = False
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = True
 ALLOWED_HOSTS = [
     'healthchecks-akira.herokuapp.com',
     '*'
@@ -85,26 +85,20 @@ TEST_RUNNER = 'hc.api.tests.CustomRunner'
 
 # Default database engine is SQLite. So one can just check out code,
 # install requirements.txt and do manage.py runserver and it works
-DATABASES = {
-    'default':
-    dj_database_url.parse
-    (
-        'postgres://postgres:@localhost:5432/hc', conn_max_age=600
-    )
-}
+DATABASES = {}
 
-# DATABASES['default'] = dj_database_url.parse('sqlite:///{BASE_DIR}/hc.sqlite'.format(BASE_DIR=BASE_DIR), conn_max_age=600)
+DATABASES['default'] = dj_database_url.parse('sqlite:///{BASE_DIR}/hc.sqlite'.format(BASE_DIR=BASE_DIR), conn_max_age=600)
 
 # You can switch database engine to postgres or mysql using environment
 # variable 'DB'. Travis CI does this.
-# if os.environ.get("DB") == "postgres":
-#     DATABASES['default'] = dj_database_url.parse('postgres://postgres:@localhost:5432/hc', conn_max_age=600)
+if os.environ.get("DB") == "postgres":
+    DATABASES['default'] = dj_database_url.parse('postgres://postgres:@localhost:5432/hc', conn_max_age=600)
 
-# if os.environ.get("DB") == "mysql":
-#     DATABASES['default'] = dj_database_url.parse('mysql://root:@localhost:5432/hc', conn_max_age=600)
+if os.environ.get("DB") == "mysql":
+    DATABASES['default'] = dj_database_url.parse('mysql://root:@localhost:5432/hc', conn_max_age=600)
 
-# if os.environ.get('DATABASE_URL', None):
-#     DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600)
+if os.environ.get('DATABASE_URL', None):
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600)
 
 
 LANGUAGE_CODE = 'en-us'
@@ -132,9 +126,8 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 COMPRESS_OFFLINE = True
 COMPRESS_ENABLED = True
 
-EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
-DJMAIL_REAL_BACKEND = 'django_ses.SESBackend'
-DEFAULT_FROM_EMAIL = os.getenv("hc_email", None)
+EMAIL_BACKEND = os.getenv('DJMAIL_REAL_BACKEND', "django.core.mail.backends.smtp.EmailBackend")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", None)
 AWS_SES_ACCESS_KEY_ID = os.getenv("AWS_SES_ACCESS_KEY_ID", None)
 AWS_SES_SECRET_ACCESS_KEY = os.getenv("AWS_SES_SECRET_ACCESS_KEY", None)
 AWS_SES_REGION_NAME = 'us-east-1'
