@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 import os
 import warnings
+import sendgrid
 
 import dj_database_url
 
@@ -20,6 +21,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '*'
 ]
+DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
 USE_PAYMENTS = False
 
 
@@ -122,12 +124,9 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 COMPRESS_OFFLINE = True
 COMPRESS_ENABLED = False if os.getenv("CIRCLECI", None) else True
 
-EMAIL_BACKEND = os.getenv("DJMAIL_REAL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "healthchecks@example.org")
-AWS_SES_ACCESS_KEY_ID = os.getenv("AWS_SES_ACCESS_KEY_ID", None)
-AWS_SES_SECRET_ACCESS_KEY = os.getenv("AWS_SES_SECRET_ACCESS_KEY", None)
-AWS_SES_REGION_NAME = "us-east-1"
-AWS_SES_REGION_ENDPOINT = "email.us-east-1.amazonaws.com"
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', None)
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', None)
+USE_PAYMENTS = False
 
 # Slack integration -- override these in local_settings
 SLACK_CLIENT_ID = None
