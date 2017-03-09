@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 import os
 import warnings
-import sendgrid
 
 import dj_database_url
 
