@@ -9,5 +9,20 @@ $(function() {
 
         return false;
     });
+});
 
+$(function() {
+    
+    $(".allow-checks").click(function() {
+        var $this = $(this);
+
+        $("#rtm-email").text($this.data("email"));
+        $("#allow-checks-email").val($this.data("email"));
+        $('#allow-checks-modal').modal("show");
+
+        return false;
+    });
+
+
+    
 });
