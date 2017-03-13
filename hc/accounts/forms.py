@@ -1,4 +1,5 @@
 from django import forms
+from hc.api.models import Check
 
 
 class LowercaseEmailField(forms.EmailField):
@@ -31,3 +32,12 @@ class RemoveTeamMemberForm(forms.Form):
 
 class TeamNameForm(forms.Form):
     team_name = forms.CharField(max_length=200, required=True)
+
+
+class TeamAccessForm(forms.Form):
+    user_id = None
+    user_checks = Check.objects.filter(user=user_id)
+    checks = forms.MultipleChoiceField(choices=user_checks,
+                                       widget=forms.CheckboxSelectMultiple()
+                                       )
+    member_id = forms.IntegerField()

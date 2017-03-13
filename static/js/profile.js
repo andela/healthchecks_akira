@@ -1,7 +1,8 @@
 $(function() {
 
     $(".allowed-checks").click(function() {
-        
+        var $this = $(this);
+        $("#member-id").val($this.data("member-id"));
         $('#all-checks-list-modal').modal("show");
         return false;
     });
