@@ -1,5 +1,12 @@
 $(function() {
 
+    $(".allowed-checks").click(function() {
+        
+        $('#all-checks-list-modal').modal("show");
+        return false;
+    });
+
+
     $(".member-remove").click(function() {
         var $this = $(this);
 
