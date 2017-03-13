@@ -81,7 +81,7 @@
                              <td>
                                 <a
                                     href="#"
-                                    data-email="{{ member.user.email }}"
+                                    data-member-id="{{ member.user.id }}"
                                     class="pull-right allowed-checks">Allowed Checks</a>
                             </td>
                         </tr>
@@ -324,21 +324,47 @@
 </div>
 <!--Modal- Allowed checks-->
 <div id="all-checks-list-modal" class="modal">
-    <div class="modal-dialog">
-        <form class="form-horizontal">
+    <div class="modal-dialog" style="width: 900px;">
+        <form class="form-horizontal" method="POST">
+            {% csrf_token %}
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="remove-check-title">Select Allowed Checks</h4>
                 </div>
                 <div class="modal-body">
-                
+                    <table>
+                    {% for check in user_checks %}
+                        <tr class="checks-row">
+                            <td class="indicator-cell">
+                                <input type="checkbox" name="checks" id="check" value= {{ check.id }} />
+                            </td>
+                            <td class="name-cell">
+                                <div data-name="{{ check.name }}"
+                                        data-tags="{{ check.tags }}"
+                                        data-url="{% url 'hc-update-name' check.code %}"
+                                        class="my-checks-name {% if not check.name %}unnamed{% endif %}">
+                                    <div>{{ check.name|default:"unnamed" }}</div>
+                                </div>
+                            </td>
+                            <td class="url-cell">
+                                <span class="my-checks-url">
+                                    <span class="base">{{ ping_endpoint }}</span>{{ check.code }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
                 </div>
                 <div class="modal-footer">
+                    <input
+                        type="hidden"
+                        name="member_id"
+                        id="member-id" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button
                         type="submit"
-                        name="set_team_name"
+                        name="select_allowed_checks"
                         class="btn btn-primary">Allow</button>
                 </div>
             </div>
