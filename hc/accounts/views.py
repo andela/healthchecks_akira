@@ -1,6 +1,7 @@
 import uuid
 import re
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -13,7 +14,7 @@ from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
                                RemoveTeamMemberForm, ReportSettingsForm,
-                               SetPasswordForm, TeamNameForm)
+                               SetPasswordForm, TeamNameForm, TeamAccessForm)
 from hc.accounts.models import Profile, Member
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
@@ -187,6 +188,10 @@ def profile(request):
                                       user=farewell_user).delete()
 
                 messages.info(request, "%s removed from team!" % email)
+        elif "select_allowed_checks" in request.POST:
+            form = TeamAccessForm(request.POST)
+            form.user_id = request.team.user.id
+
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()
@@ -198,7 +203,8 @@ def profile(request):
                 messages.success(request, "Team Name updated!")
 
     tags = set()
-    for check in Check.objects.filter(user=request.team.user):
+    user_checks = Check.objects.filter(user=request.team.user)
+    for check in user_checks:
         tags.update(check.tags_list())
 
     username = request.team.user.username
@@ -213,7 +219,9 @@ def profile(request):
         "page": "profile",
         "badge_urls": badge_urls,
         "profile": profile,
-        "show_api_key": show_api_key
+        "show_api_key": show_api_key,
+        "user_checks": user_checks,
+        "ping_endpoint": settings.PING_ENDPOINT
     }
 
     return render(request, "accounts/profile.html", ctx)
