@@ -78,6 +78,12 @@
                                     data-email="{{ member.user.email }}"
                                     class="pull-right member-remove">Remove</a>
                             </td>
+                             <td>
+                                <a
+                                    href="#"
+                                    data-email="{{ member.user.email }}"
+                                    class="pull-right allowed-checks">Allowed Checks</a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -316,12 +322,34 @@
         </form>
     </div>
 </div>
+<!--Modal- Allowed checks-->
+<div id="all-checks-list-modal" class="modal">
+    <div class="modal-dialog">
+        <form class="form-horizontal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="remove-check-title">Select Allowed Checks</h4>
+                </div>
+                <div class="modal-body">
+                
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button
+                        type="submit"
+                        name="set_team_name"
+                        class="btn btn-primary">Allow</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
-{% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/profile.js' %}"></script>
-{% endcompress %}
 {% endblock %}
