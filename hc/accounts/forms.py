@@ -36,8 +36,8 @@ class TeamNameForm(forms.Form):
 
 class TeamAccessForm(forms.Form):
     user_id = None
-    user_checks = Check.objects.filter(user=user_id)
-    checks = forms.MultipleChoiceField(choices=user_checks,
+    user_check = Check.objects.filter(user=user_id)
+    checks = forms.MultipleChoiceField(choices=user_check,
                                        widget=forms.CheckboxSelectMultiple()
                                        )
     member_id = forms.IntegerField()

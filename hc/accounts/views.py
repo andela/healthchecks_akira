@@ -15,7 +15,7 @@ from django.shortcuts import redirect, render
 from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
                                RemoveTeamMemberForm, ReportSettingsForm,
                                SetPasswordForm, TeamNameForm, TeamAccessForm)
-from hc.accounts.models import Profile, Member
+from hc.accounts.models import Profile, Member, MemberAllowedChecks
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
 
@@ -189,8 +189,32 @@ def profile(request):
 
                 messages.info(request, "%s removed from team!" % email)
         elif "select_allowed_checks" in request.POST:
-            form = TeamAccessForm(request.POST)
-            form.user_id = request.team.user.id
+            import json
+            # form = TeamAccessForm(request.POST)
+            # if form.is_valid():
+            post_data = request.POST   # TODO Clean out
+            post_data = json.dumps(dict(post_data))
+            post_data = json.loads(post_data)
+            check_ids = post_data.get('checks', None)
+            member_id = post_data.get('member_id', None)
+
+            user = User.objects.get(pk=member_id[0])
+
+            # remove previous entries
+            for allowed_check in MemberAllowedChecks.objects.filter(user=user):
+                allowed_check.delete()
+
+            # allowed checks selected for user
+            if check_ids:
+                for check_id in check_ids:
+                    check = Check.objects.get(pk=check_id)
+                    allowed_user = MemberAllowedChecks(user=user, check_id=check)
+                    allowed_user.save()
+
+            # for c in checks_ids.get('checks'):
+            #     c.save()
+            # print (checks_ids.get('checks'))
+            # print(request.POST)
 
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:

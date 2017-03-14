@@ -11,6 +11,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from hc.lib import emails
+from hc.api.models import Check
 
 
 class Profile(models.Model):
@@ -86,3 +87,8 @@ class Profile(models.Model):
 class Member(models.Model):
     team = models.ForeignKey(Profile)
     user = models.ForeignKey(User)
+
+
+class MemberAllowedChecks(models.Model):
+    user = models.ForeignKey(User)
+    check_id = models.ForeignKey(Check)
