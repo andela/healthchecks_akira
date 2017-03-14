@@ -33,7 +33,7 @@ def my_checks(request):
     checks = list(q)
 
     counter = Counter()
-    down_tags, grace_tags = set(), set()
+    down_tags, grace_tags, often_tags = set(), set(), set()
     for check in checks:
         status = check.get_status()
         for tag in check.tags_list():
@@ -44,6 +44,8 @@ def my_checks(request):
 
             if status == "down":
                 down_tags.add(tag)
+            elif status == "often":
+                often_tags.add(tag)
             elif check.in_grace_period():
                 grace_tags.add(tag)
 
@@ -54,6 +56,7 @@ def my_checks(request):
         "tags": counter.most_common(),
         "down_tags": down_tags,
         "grace_tags": grace_tags,
+        "often_tags": often_tags,
         "ping_endpoint": settings.PING_ENDPOINT
     }
 
@@ -552,3 +555,23 @@ def privacy(request):
 
 def terms(request):
     return render(request, "front/terms.html", {})
+
+
+# Failed Jobs
+@login_required
+def failed_checks(request):
+    q = Check.objects.filter(user=request.team.user).order_by("created")
+    checks = list(q)
+    down_checks = [check for check in checks if check.get_status() == 'down']
+    down_tags = set((tag for down_check in down_checks for tag in down_check.tags_list()))
+
+    ctx = {
+        "page": "failed",
+        "checks": down_checks,
+        "now": timezone.now(),
+        "tags": Counter(down_tags).most_common(),
+        "down_tags": down_tags,
+        "ping_endpoint": settings.PING_ENDPOINT
+    }
+
+    return render(request, "front/failed_checks.html", ctx)
