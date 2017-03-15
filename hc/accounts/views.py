@@ -231,6 +231,8 @@ def profile(request):
     for check in user_checks:
         tags.update(check.tags_list())
 
+    allowed_checks = MemberAllowedChecks.objects.all()
+
     username = request.team.user.username
     badge_urls = []
     for tag in sorted(tags, key=lambda s: s.lower()):
@@ -245,7 +247,8 @@ def profile(request):
         "profile": profile,
         "show_api_key": show_api_key,
         "user_checks": user_checks,
-        "ping_endpoint": settings.PING_ENDPOINT
+        "ping_endpoint": settings.PING_ENDPOINT,
+        "allowed_checks": allowed_checks
     }
 
     return render(request, "accounts/profile.html", ctx)

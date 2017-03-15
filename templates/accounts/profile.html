@@ -324,7 +324,7 @@
 </div>
 <!--Modal- Allowed checks-->
 <div id="all-checks-list-modal" class="modal">
-    <div class="modal-dialog" style="width: 900px;">
+    <div class="modal-dialog" style="width: 60%;">
         <form class="form-horizontal" method="POST">
             {% csrf_token %}
             <div class="modal-content">
@@ -333,10 +333,10 @@
                     <h4 class="remove-check-title">Select Allowed Checks</h4>
                 </div>
                 <div class="modal-body">
-                    <table>
+                    <table style="width: 90%;margin-left: auto;margin-right: auto;">
                     {% for check in user_checks %}
                         <tr class="checks-row">
-                            <td class="indicator-cell">
+                            <td class="indicator-cell" style="padding-right: 15px;">
                                 <input type="checkbox" name="checks" id="check" value= {{ check.id }} />
                             </td>
                             <td class="name-cell">
