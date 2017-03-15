@@ -190,8 +190,6 @@ def profile(request):
                 messages.info(request, "%s removed from team!" % email)
         elif "select_allowed_checks" in request.POST:
             import json
-            # form = TeamAccessForm(request.POST)
-            # if form.is_valid():
             post_data = request.POST   # TODO Clean out
             post_data = json.dumps(dict(post_data))
             post_data = json.loads(post_data)
@@ -210,12 +208,6 @@ def profile(request):
                     check = Check.objects.get(pk=check_id)
                     allowed_user = MemberAllowedChecks(user=user, check_id=check)
                     allowed_user.save()
-
-            # for c in checks_ids.get('checks'):
-            #     c.save()
-            # print (checks_ids.get('checks'))
-            # print(request.POST)
-
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()
