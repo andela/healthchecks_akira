@@ -1,5 +1,6 @@
 import uuid
 import re
+import json
 
 from django.conf import settings
 from django.contrib import messages
@@ -38,7 +39,6 @@ def _make_user(email):
 
     return user
 
-
 def _associate_demo_check(request, user):
     if "welcome_code" in request.session:
         check = Check.objects.get(code=request.session["welcome_code"])
@@ -51,7 +51,6 @@ def _associate_demo_check(request, user):
             check.assign_all_channels()
 
             del request.session["welcome_code"]
-
 
 def login(request):
     bad_credentials = False
@@ -86,7 +85,6 @@ def login(request):
         "bad_link": bad_link
     }
     return render(request, "accounts/login.html", ctx)
-
 
 def logout(request):
     auth_logout(request)
@@ -128,7 +126,6 @@ def check_token(request, username, token):
         return redirect("hc-login")
 
     return render(request, "accounts/check_token_submit.html")
-
 
 @login_required
 def profile(request):
@@ -189,7 +186,6 @@ def profile(request):
 
                 messages.info(request, "%s removed from team!" % email)
         elif "select_allowed_checks" in request.POST:
-            import json
             post_data = request.POST   # TODO Clean out
             post_data = json.dumps(dict(post_data))
             post_data = json.loads(post_data)
@@ -244,7 +240,6 @@ def profile(request):
     }
 
     return render(request, "accounts/profile.html", ctx)
-
 
 @login_required
 def set_password(request, token):
