@@ -14,7 +14,7 @@ from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
                                RemoveTeamMemberForm, ReportSettingsForm,
-                               SetPasswordForm, TeamNameForm, TeamAccessForm)
+                               SetPasswordForm, TeamNameForm)
 from hc.accounts.models import Profile, Member, MemberAllowedChecks
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
