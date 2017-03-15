@@ -33,9 +33,7 @@ def my_checks(request):
     q = Check.objects.filter(user=request.team.user).order_by("created")
     checks = list(q)
 
-    allowed_checks = MemberAllowedChecks.objects.filter(user=request.team.user)
-
-    print ("===>", allowed_checks)
+    allowed_checks = MemberAllowedChecks.objects.filter(user=request.user).values_list('check_id_id', flat=True)
 
     counter = Counter()
     down_tags, grace_tags = set(), set()
@@ -60,7 +58,8 @@ def my_checks(request):
         "down_tags": down_tags,
         "grace_tags": grace_tags,
         "ping_endpoint": settings.PING_ENDPOINT,
-        "allowed_checks": allowed_checks
+        "allowed_checks": allowed_checks,
+        "user": request.user
     }
 
     return render(request, "front/my_checks.html", ctx)
