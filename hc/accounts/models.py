@@ -91,4 +91,4 @@ class Member(models.Model):
 
 class MemberAllowedChecks(models.Model):
     user = models.ForeignKey(User)
-    check_id = models.ForeignKey(Check)
+    checks = models.ManyToManyField(Check)

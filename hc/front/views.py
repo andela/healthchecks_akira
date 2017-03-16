@@ -33,7 +33,7 @@ def my_checks(request):
     q = Check.objects.filter(user=request.team.user).order_by("created")
     checks = list(q)
 
-    allowed_checks = MemberAllowedChecks.objects.filter(user=request.user).values_list('check_id_id', flat=True)
+    allowed_checks = MemberAllowedChecks.objects.filter(user=request.user).values_list('checks_id', flat=True)
 
     counter = Counter()
     down_tags, grace_tags = set(), set()

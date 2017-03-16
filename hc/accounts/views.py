@@ -192,17 +192,15 @@ def profile(request):
             check_ids = post_data.get('checks', None)
             member_id = post_data.get('member_id', None)
 
-            user = User.objects.get(pk=member_id[0])
-
             # remove previous entries
-            for allowed_check in MemberAllowedChecks.objects.filter(user=user):
+            for allowed_check in MemberAllowedChecks.objects.filter(user_id=member_id[0]):
                 allowed_check.delete()
 
             # allowed checks selected for user
             if check_ids:
                 for check_id in check_ids:
                     check = Check.objects.get(pk=check_id)
-                    allowed_user = MemberAllowedChecks(user=user, check_id=check)
+                    allowed_user = MemberAllowedChecks(user_id=member_id[0], check_id=check)
                     allowed_user.save()
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:
@@ -240,6 +238,7 @@ def profile(request):
     }
 
     return render(request, "accounts/profile.html", ctx)
+
 
 @login_required
 def set_password(request, token):
