@@ -39,6 +39,7 @@ def _make_user(email):
 
     return user
 
+
 def _associate_demo_check(request, user):
     if "welcome_code" in request.session:
         check = Check.objects.get(code=request.session["welcome_code"])
@@ -51,6 +52,7 @@ def _associate_demo_check(request, user):
             check.assign_all_channels()
 
             del request.session["welcome_code"]
+
 
 def login(request):
     bad_credentials = False
@@ -85,6 +87,7 @@ def login(request):
         "bad_link": bad_link
     }
     return render(request, "accounts/login.html", ctx)
+
 
 def logout(request):
     auth_logout(request)
@@ -126,6 +129,7 @@ def check_token(request, username, token):
         return redirect("hc-login")
 
     return render(request, "accounts/check_token_submit.html")
+
 
 @login_required
 def profile(request):
@@ -186,21 +190,19 @@ def profile(request):
 
                 messages.info(request, "%s removed from team!" % email)
         elif "select_allowed_checks" in request.POST:
-            post_data = request.POST   # TODO Clean out
-            post_data = json.dumps(dict(post_data))
-            post_data = json.loads(post_data)
+            post_data = dict(request.POST.lists())
             check_ids = post_data.get('checks', None)
             member_id = post_data.get('member_id', None)
-
+            member = User.objects.get(id=member_id[0])
             # remove previous entries
-            for allowed_check in MemberAllowedChecks.objects.filter(user_id=member_id[0]):
+            for allowed_check in MemberAllowedChecks.objects.filter(user=member):
                 allowed_check.delete()
 
             # allowed checks selected for user
             if check_ids:
                 for check_id in check_ids:
                     check = Check.objects.get(pk=check_id)
-                    allowed_user = MemberAllowedChecks(user_id=member_id[0], check_id=check)
+                    allowed_user = MemberAllowedChecks(user=member, checks=check)
                     allowed_user.save()
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:
