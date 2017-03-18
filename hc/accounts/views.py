@@ -201,8 +201,7 @@ def profile(request):
             # allowed checks selected for user
             if check_ids:
                 for check_id in check_ids:
-                    check = Check.objects.get(pk=check_id)
-                    allowed_user = MemberAllowedChecks(user=member, checks=check)
+                    allowed_user = MemberAllowedChecks.objects.create(user=member, checks_id=check_id)
                     allowed_user.save()
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:
