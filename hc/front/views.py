@@ -36,7 +36,7 @@ def my_checks(request):
     allowed_checks = MemberAllowedChecks.objects.filter(user=request.user).values_list('checks_id', flat=True)
 
     counter = Counter()
-    down_tags, grace_tags = set(), set()
+    down_tags, grace_tags, often_tags = set(), set(), set()
     for check in checks:
         status = check.get_status()
         for tag in check.tags_list():
@@ -47,6 +47,8 @@ def my_checks(request):
 
             if status == "down":
                 down_tags.add(tag)
+            elif status == "often":
+                often_tags.add(tag)
             elif check.in_grace_period():
                 grace_tags.add(tag)
 
@@ -60,6 +62,7 @@ def my_checks(request):
         "ping_endpoint": settings.PING_ENDPOINT,
         "allowed_checks": allowed_checks,
         "user": request.user
+        "often_tags": often_tags
     }
 
     return render(request, "front/my_checks.html", ctx)

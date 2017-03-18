@@ -21,8 +21,13 @@ class Command(BaseCommand):
         now = timezone.now()
         going_down = query.filter(alert_after__lt=now, status="up")
         going_up = query.filter(alert_after__gt=now, status="down")
+        going_down_from_often = query.filter(alert_after__lt=now, status="often")
+        often_checks = query.filter(alert_often_pings=True, status="often")
+
         # Don't combine this in one query so Postgres can query using index:
-        checks = list(going_down.iterator()) + list(going_up.iterator())
+        checks = list(going_down.iterator()) + list(going_up.iterator()) +\
+            list(going_down_from_often.iterator()) +\
+            list(often_checks.iterator())
         if not checks:
             return False
 
@@ -48,6 +53,9 @@ class Command(BaseCommand):
         tmpl = "\nSending alert, status=%s, code=%s\n"
         self.stdout.write(tmpl % (check.status, check.code))
         errors = check.send_alert()
+        if check.status == "often":
+            check.alert_often_pings = False
+            check.save()
         for ch, error in errors:
             self.stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
 
