@@ -61,7 +61,7 @@ def my_checks(request):
         "grace_tags": grace_tags,
         "ping_endpoint": settings.PING_ENDPOINT,
         "allowed_checks": allowed_checks,
-        "user": request.user
+        "user": request.user,
         "often_tags": often_tags
     }
 
