@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^checks/([\w-]+)/', include(check_urls)),
     url(r'^integrations/', include(channel_urls)),
     url(r'^failed/$', views.failed_checks, name="hc-failed-checks"),
-    url(r'^blog/$', views.blog, name="hc-blogs")
+    url(r'^blog/$', views.blog, name="hc-blogs"),
     url(r'^docs/$', views.docs, name="hc-docs"),
     url(r'^docs/api/$', views.docs_api, name="hc-docs-api"),
     url(r'^about/$', views.about, name="hc-about"),

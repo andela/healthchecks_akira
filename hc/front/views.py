@@ -575,3 +575,8 @@ def failed_checks(request):
     }
 
     return render(request, "front/failed_checks.html", ctx)
+
+
+@login_required
+def blog(request):
+    return render(request, "front/blog.html", {})
