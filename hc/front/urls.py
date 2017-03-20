@@ -11,8 +11,12 @@ check_urls = [
 ]
 
 blog_urls = [
-    url(r'^name/$', views.update_blog, name="hc-update-blog"),
-    url(r'^remove/$', views.remove_blog, name="hc-remove-blog"),
+    url(r'^list/$', views.post_list, name='hc-post-list'),
+    url(r'^user/list/$', views.user_post, name='hc-user-list'),
+    url(r'^detail/(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/'
+        r'(?P<post>[-\w]+)/$',
+        views.post_detail,
+        name='hc-post-detail'),
 ]
 
 channel_urls = [
@@ -40,12 +44,10 @@ urlpatterns = [
     url(r'^checks/([\w-]+)/', include(check_urls)),
     url(r'^integrations/', include(channel_urls)),
     url(r'^failed/$', views.failed_checks, name="hc-failed-checks"),
-    url(r'^blog/$', views.blog, name="hc-blogs"),
-    url(r'^blog/new/$', views.new_blog, name="hc-new-blog"),
-    url(r'^blog/', include(blog_urls)),
     url(r'^docs/$', views.docs, name="hc-docs"),
     url(r'^docs/api/$', views.docs_api, name="hc-docs-api"),
     url(r'^about/$', views.about, name="hc-about"),
     url(r'^privacy/$', views.privacy, name="hc-privacy"),
     url(r'^terms/$', views.terms, name="hc-terms"),
+    url(r'^blog/', include(blog_urls)),
 ]

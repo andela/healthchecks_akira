@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load compress staticfiles %}
+{% load hc_extras humanize %}
+
+{% block title %}Blogs - healthchecks.io{% endblock %}
+
+
+{% block content %}
+<table>
+    <tr>
+        <td>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1>
+                        {% block header %}Blogs{% endblock %}
+                    </h1>
+                </div>
+                    
+                {% if tags %}
+                <div id="my-blogs-tags" class="col-sm-12">
+                    {% for tag, count in tags %}
+                        <button class="btn btn-default btn-xs" >{{ tag }}</button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="row">
+                <div class="col-sm-12">
+                {% if posts %}
+                    {% for post in posts %}
+                    <h2>
+                        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                    </h2>
+                    <p class="date">
+                        Published {{ post.publish }} by {{ post.author }}
+                    </p>
+                    {{ post.body|truncatewords:30|linebreaks }}
+                    {% endfor %}
+                {% else %}
+                {% block alert_info %}
+                    <div class="alert alert-info">There are no blogs yet.</div>
+                {% endblock %}
+                {% endif %}
+                </div>
+            </div>
+
+        </td>
+    </tr>
+</table>
+{% include "front/paginator.html" with page=posts %}
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/nouislider.min.js' %}"></script>
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/checks.js' %}"></script>
+{% endcompress %}
+{% endblock %}

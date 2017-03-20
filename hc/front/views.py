@@ -6,6 +6,7 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.http import Http404, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
@@ -14,7 +15,8 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
-from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping, Blog
+from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
+                           Ping, Post)
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
                             TimeoutForm)
 
@@ -577,53 +579,54 @@ def failed_checks(request):
     return render(request, "front/failed_checks.html", ctx)
 
 
-@login_required
-def blog(request):
-    b = Blog.objects.filter(user=request.team.user).order_by("created")
-    blogs = list(b)
-    tags = [blog.tags_list() for blog in blogs]
+def post_list(request):
+    object_list = Post.published.all()
+    paginator = Paginator(object_list, 3)
+    page = request.GET.get('post')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    finally:
+        tags = set((tag for post in posts for tag in post.tags_list()))
 
     ctx = {
-        "page": "blog",
-        "blogs": blogs,
-        "now": timezone.now(),
-        "tags": tags
+        "page": "posts",
+        "posts": posts,
+        "tags": Counter(tags).most_common()
     }
-    return render(request, "front/blog.html", ctx)
+    return render(request, "front/post/list.html", ctx)
+
+
+def post_detail(request, year, month, day, post):
+    post = get_object_or_404(Post, slug=post,
+                             status='published',
+                             publish__year=year,
+                             publish__month=month,
+                             publish__day=day)
+    return render(request, "front/post/detail.html", {'post': post})
 
 
 @login_required
-def new_blog(request):
-    return render(request, "front/new_blog.html")
+def user_post(request):
+    object_list = Post.objects.filter(author=request.team.user).order_by("created")
+    paginator = Paginator(object_list, 3)
+    page = request.GET.get('user-posts')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    finally:
+        tags = set((tag for post in posts for tag in post.tags_list()))
 
+    ctx = {
+        "page": "user-posts",
+        "posts": posts,
+        "tags": Counter(tags).most_common()
+    }
+    return render(request, "front/post/user_list.html", ctx)
 
-@login_required
-@uuid_or_400
-def update_blog(request, name):
-    assert request.method == "POST"
-
-    blog = get_object_or_404(Blog, name=name)
-    if blog.user_id != request.team.user.id:
-        return HttpResponseForbidden()
-
-    form = NameTagsForm(request.POST)
-    if form.is_valid():
-        blog.name = form.cleaned_data["name"]
-        blog.tags = form.cleaned_data["tags"]
-        blog.save()
-
-    return redirect("hc-blogs")
-
-
-@login_required
-@uuid_or_400
-def remove_blog(request, name):
-    assert request.method == "POST"
-
-    blog = get_object_or_404(Blog, name=name)
-    if blog.user != request.team.user:
-        return HttpResponseForbidden()
-
-    blog.delete()
-
-    return redirect("hc-blogs")

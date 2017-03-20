@@ -1,5 +1,5 @@
 from django import forms
-from hc.api.models import Channel
+from hc.api.models import Channel, Post
 
 
 class NameTagsForm(forms.Form):
@@ -41,3 +41,19 @@ class AddWebhookForm(forms.Form):
 
     def get_value(self):
         return "{value_down}\n{value_up}".format(**self.cleaned_data)
+
+
+class BlogForm(forms.Form):
+    title = forms.CharField(label='Title', max_length=100)
+    content = forms.CharField(label='Content', max_length=5000)
+    tags = forms.CharField(label='Tags', max_length=100)
+
+    def clean_tags(self):
+        l = []
+
+        for part in self.cleaned_data["tags"].split(" "):
+            part = part.strip()
+            if part != "":
+                l.append(part)
+
+        return " ".join(l)

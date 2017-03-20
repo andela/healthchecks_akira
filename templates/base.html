@@ -83,6 +83,10 @@
                         <a href="{% url 'hc-channels' %}">Integrations</a>
                     </li>
 
+                    <li {% if page == 'user-posts' %} class="active" {% endif %}>
+                        <a href="{% url 'hc-user-list' %}">My Blogs</a>
+                    </li>
+
                 {% endif %}
 
 
@@ -95,11 +99,12 @@
                 <li {% if page == 'docs' %} class="active" {% endif %}>
                     <a href="{% url 'hc-docs' %}">Docs</a>
                 </li>
-
-                <li {% if page == 'blog' %} class="active" {% endif %}>
-                    <a href="{% url 'hc-blogs' %}">Blog</a>
+                {% if request.user.is_authenticated %}
+                {% else %}
+                <li {% if page == 'posts' %} class="active" {% endif %}>
+                    <a href="{% url 'hc-post-list' %}">Blogs</a>
                 </li>
-
+                {% endif %}
                 <li {% if page == 'about' %} class="active" {% endif %}>
                     <a href="{% url 'hc-about' %}">About</a>
                 </li>
