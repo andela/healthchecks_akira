@@ -1,6 +1,7 @@
 import uuid
 import re
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -14,7 +15,7 @@ from django.shortcuts import redirect, render
 from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
                                RemoveTeamMemberForm, ReportSettingsForm,
                                SetPasswordForm, TeamNameForm)
-from hc.accounts.models import Profile, Member
+from hc.accounts.models import Profile, Member, MemberAllowedChecks
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
 
@@ -187,6 +188,20 @@ def profile(request):
                                       user=farewell_user).delete()
 
                 messages.info(request, "%s removed from team!" % email)
+        elif "select_allowed_checks" in request.POST:
+            post_data = dict(request.POST.lists())
+            check_ids = post_data.get('checks', None)
+            member_id = post_data.get('member_id', None)
+            member = User.objects.get(id=member_id[0])
+            # remove previous entries
+            for allowed_check in MemberAllowedChecks.objects.filter(user=member):
+                allowed_check.delete()
+
+            # allowed checks selected for user
+            if check_ids:
+                for check_id in check_ids:
+                    allowed_user = MemberAllowedChecks.objects.create(user=member, checks_id=check_id)
+                    allowed_user.save()
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()
@@ -198,8 +213,11 @@ def profile(request):
                 messages.success(request, "Team Name updated!")
 
     tags = set()
-    for check in Check.objects.filter(user=request.team.user):
+    user_checks = Check.objects.filter(user=request.team.user)
+    for check in user_checks:
         tags.update(check.tags_list())
+
+    allowed_checks = MemberAllowedChecks.objects.all()
 
     username = request.team.user.username
     badge_urls = []
@@ -213,7 +231,10 @@ def profile(request):
         "page": "profile",
         "badge_urls": badge_urls,
         "profile": profile,
-        "show_api_key": show_api_key
+        "show_api_key": show_api_key,
+        "user_checks": user_checks,
+        "ping_endpoint": settings.PING_ENDPOINT,
+        "allowed_checks": allowed_checks
     }
 
     return render(request, "accounts/profile.html", ctx)

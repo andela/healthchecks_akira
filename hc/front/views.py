@@ -13,6 +13,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.six.moves.urllib.parse import urlencode
+from hc.accounts.models import MemberAllowedChecks
 from hc.api.decorators import uuid_or_400
 from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
@@ -31,6 +32,8 @@ def pairwise(iterable):
 def my_checks(request):
     q = Check.objects.filter(user=request.team.user).order_by("created")
     checks = list(q)
+
+    allowed_checks = MemberAllowedChecks.objects.filter(user=request.user).values_list('checks_id', flat=True)
 
     counter = Counter()
     down_tags, grace_tags, often_tags = set(), set(), set()
@@ -56,8 +59,10 @@ def my_checks(request):
         "tags": counter.most_common(),
         "down_tags": down_tags,
         "grace_tags": grace_tags,
-        "often_tags": often_tags,
-        "ping_endpoint": settings.PING_ENDPOINT
+        "ping_endpoint": settings.PING_ENDPOINT,
+        "allowed_checks": allowed_checks,
+        "user": request.user,
+        "often_tags": often_tags
     }
 
     return render(request, "front/my_checks.html", ctx)
