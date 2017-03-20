@@ -12,6 +12,7 @@
         <th></th>
     </tr>
     {% for check in checks %}
+    {% if check.user_id == user.id or check.id in allowed_checks %}
     <tr class="checks-row">
         <td class="indicator-cell">
             {% if check.get_status == "new" %}
@@ -115,6 +116,7 @@
             </div>
         </td>
     </tr>
+    {% endif %}
     {% endfor %}
 
 </table>

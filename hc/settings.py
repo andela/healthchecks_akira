@@ -120,7 +120,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-COMPRESS_OFFLINE = True
+COMPRESS_OFFLINE = False
 COMPRESS_ENABLED = False if os.getenv("CIRCLECI", None) else True
 
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', None)
@@ -145,3 +145,4 @@ if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
 else:
     warnings.warn("local_settings.py not found, using defaults")
+
