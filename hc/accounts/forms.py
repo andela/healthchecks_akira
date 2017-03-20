@@ -1,5 +1,4 @@
 from django import forms
-from hc.api.models import Check
 
 
 class LowercaseEmailField(forms.EmailField):
