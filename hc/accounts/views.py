@@ -201,7 +201,6 @@ def profile(request):
             if check_ids:
                 for check_id in check_ids:
                     allowed_user = MemberAllowedChecks.objects.create(user=member, checks_id=check_id)
-                    allowed_user.save()
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()
