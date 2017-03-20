@@ -194,8 +194,7 @@ def profile(request):
             member_id = post_data.get('member_id', None)
             member = User.objects.get(id=member_id[0])
             # remove previous entries
-            for allowed_check in MemberAllowedChecks.objects.filter(user=member):
-                allowed_check.delete()
+            MemberAllowedChecks.objects.filter(user=member).delete()
 
             # allowed checks selected for user
             if check_ids:
