@@ -14,7 +14,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
-from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
+from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping, Blog
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
                             TimeoutForm)
 
@@ -579,4 +579,51 @@ def failed_checks(request):
 
 @login_required
 def blog(request):
-    return render(request, "front/blog.html", {})
+    b = Blog.objects.filter(user=request.team.user).order_by("created")
+    blogs = list(b)
+    tags = [blog.tags_list() for blog in blogs]
+
+    ctx = {
+        "page": "blog",
+        "blogs": blogs,
+        "now": timezone.now(),
+        "tags": tags
+    }
+    return render(request, "front/blog.html", ctx)
+
+
+@login_required
+def new_blog(request):
+    return render(request, "front/new_blog.html")
+
+
+@login_required
+@uuid_or_400
+def update_blog(request, name):
+    assert request.method == "POST"
+
+    blog = get_object_or_404(Blog, name=name)
+    if blog.user_id != request.team.user.id:
+        return HttpResponseForbidden()
+
+    form = NameTagsForm(request.POST)
+    if form.is_valid():
+        blog.name = form.cleaned_data["name"]
+        blog.tags = form.cleaned_data["tags"]
+        blog.save()
+
+    return redirect("hc-blogs")
+
+
+@login_required
+@uuid_or_400
+def remove_blog(request, name):
+    assert request.method == "POST"
+
+    blog = get_object_or_404(Blog, name=name)
+    if blog.user != request.team.user:
+        return HttpResponseForbidden()
+
+    blog.delete()
+
+    return redirect("hc-blogs")

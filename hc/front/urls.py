@@ -10,6 +10,11 @@ check_urls = [
     url(r'^log/$', views.log, name="hc-log"),
 ]
 
+blog_urls = [
+    url(r'^name/$', views.update_blog, name="hc-update-blog"),
+    url(r'^remove/$', views.remove_blog, name="hc-remove-blog"),
+]
+
 channel_urls = [
     url(r'^$', views.channels, name="hc-channels"),
     url(r'^add/$', views.add_channel, name="hc-add-channel"),
@@ -36,6 +41,8 @@ urlpatterns = [
     url(r'^integrations/', include(channel_urls)),
     url(r'^failed/$', views.failed_checks, name="hc-failed-checks"),
     url(r'^blog/$', views.blog, name="hc-blogs"),
+    url(r'^blog/new/$', views.new_blog, name="hc-new-blog"),
+    url(r'^blog/', include(blog_urls)),
     url(r'^docs/$', views.docs, name="hc-docs"),
     url(r'^docs/api/$', views.docs_api, name="hc-docs-api"),
     url(r'^about/$', views.about, name="hc-about"),

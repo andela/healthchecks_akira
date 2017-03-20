@@ -267,3 +267,18 @@ class Notification(models.Model):
     channel = models.ForeignKey(Channel)
     created = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=200, blank=True)
+
+
+class Blog(models.Model):
+
+    class Meta:
+        get_latest_by = "created"
+
+    name = models.CharField(max_length=100, default="Blog Title")
+    tags = models.CharField(max_length=500, blank=True)
+    user = models.ForeignKey(User, blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    content = models.CharField(max_length=2000, default="no content")
+
+    def tags_list(self):
+        return [t.strip() for t in self.tags.split(" ") if t.strip()]

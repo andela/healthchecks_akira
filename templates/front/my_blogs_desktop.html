@@ -1,0 +1,51 @@
+{% load hc_extras humanize %}
+<table id="checks-table" class="table hidden-xs">
+    <tr>
+        <th></th>
+        <th class="th-name">Name</th>
+        <th>Tags</th>
+        <th>Created</th>
+        <th></th>
+    </tr>
+    {% for blog in blogs %}
+    <tr class="checks-row">
+        <td class="name-cell">
+            <div data-name="{{ blog.name }}"
+                    data-tags="{{ blog.tags }}"
+                    data-url="{% url 'hc-update-blog' blog.name %}"
+                    class="my-checks-name {% if not blog.name %}unnamed{% endif %}">
+                <div>{{ blog.name|default:"unnamed" }}</div>
+                {% for tag in tag.tags_list %}
+                <span class="label label-tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </td>
+        <td>
+            {{blog.created}}
+        </td>
+        <td>
+            <div class="check-menu dropdown">
+                <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                <span class="icon-settings" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{% url 'hc-update-blog' blog.name %}">
+                            Update
+                        </a>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href="#" class="check-menu-remove"
+                            data-name="{{ blog.name }}"
+                            data-url="{% url 'hc-remove-blog' blog.name %}">
+                            Remove
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
