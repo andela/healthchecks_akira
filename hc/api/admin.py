@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
-from hc.api.models import Channel, Check, Notification, Ping
+from hc.api.models import Channel, Check, Notification, Ping, Post
 
 
 class OwnershipListFilter(admin.SimpleListFilter):
@@ -200,3 +200,15 @@ class NotificationsAdmin(admin.ModelAdmin):
 
     def channel_value(self, obj):
         return obj.channel.value
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'slug', 'author', 'publish',
+                    'status', 'tags')
+    list_filter = ('status', 'created', 'publish', 'author', 'tags')
+    search_fields = ('title', 'body', 'tags')
+    prepopulated_fields = {'slug': ('title',)}
+    raw_id_fields = ('author',)
+    date_hierarchy = 'publish'
+    ordering = ['status', 'publish', 'tags']

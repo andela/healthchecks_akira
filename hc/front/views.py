@@ -6,6 +6,8 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.http import Http404, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
@@ -15,9 +17,10 @@ from django.utils.crypto import get_random_string
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.accounts.models import MemberAllowedChecks
 from hc.api.decorators import uuid_or_400
-from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
+from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
+                           Ping, Post)
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
-                            TimeoutForm)
+                            TimeoutForm, EmailPostForm)
 
 
 # from itertools recipes:
@@ -580,3 +583,78 @@ def failed_checks(request):
     }
 
     return render(request, "front/failed_checks.html", ctx)
+
+
+def post_list(request):
+    object_list = Post.published.all()
+    paginator = Paginator(object_list, 3)
+    page = request.GET.get('post')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    finally:
+        tags = set((tag for post in posts for tag in post.tags_list()))
+
+    ctx = {
+        "page": "posts",
+        "posts": posts,
+        "tags": Counter(tags).most_common()
+    }
+    return render(request, "front/post/list.html", ctx)
+
+
+def post_detail(request, year, month, day, post):
+    post = get_object_or_404(Post, slug=post,
+                             status='published',
+                             publish__year=year,
+                             publish__month=month,
+                             publish__day=day)
+    return render(request, "front/post/detail.html", {'post': post})
+
+
+@login_required
+def user_post(request):
+    object_list = Post.objects.filter(author=request.team.user).order_by("created")
+    paginator = Paginator(object_list, 3)
+    page = request.GET.get('user-posts')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    finally:
+        tags = set((tag for post in posts for tag in post.tags_list()))
+
+    ctx = {
+        "page": "user-posts",
+        "posts": posts,
+        "tags": Counter(tags).most_common()
+    }
+    return render(request, "front/post/user_list.html", ctx)
+
+
+@login_required
+def share_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, status='published')
+    sent = False
+    if request.method == 'POST':
+        form = EmailPostForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            post_url = request.build_absolute_uri(
+                                             post.get_absolute_url())
+            subject = '{} ({}) recommends you reading "{}"'.format(
+                data['name'], data['email'], post.title)
+            message = 'Read "{}" at {}\n\n{}\'s comments: {}'.format(
+                post.title, post_url, data['name'], data['comments'])
+            send_mail(subject, message, 'healthchecks@example.org', [data['to']])
+            sent = True
+    else:
+        form = EmailPostForm()
+    return render(request, 'front/post/share.html',
+                  {'post': post, 'form': form})
+

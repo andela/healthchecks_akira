@@ -267,3 +267,47 @@ class Notification(models.Model):
     channel = models.ForeignKey(Channel)
     created = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=200, blank=True)
+
+
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super(PublishedManager, self).get_queryset().\
+                filter(status='published')
+
+
+class Post(models.Model):
+    class Meta:
+        ordering = ('-publish',)
+
+    STATUS_CHOICES = (
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+    )
+
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250, unique_for_date='publish')
+    author = models.ForeignKey(User, related_name='blog_posts')
+    body = models.TextField()
+    publish = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES,
+                              default='draft')
+    tags = models.CharField(max_length=500, blank=True)
+
+    objects = models.Manager()
+    published = PublishedManager()
+
+    def tags_list(self):
+        return [t.strip() for t in self.tags.split(" ") if t.strip()]
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('hc-post-detail', args=[
+            self.publish.year,
+            self.publish.strftime('%m'),
+            self.publish.strftime('%d'),
+            self.slug
+        ])
