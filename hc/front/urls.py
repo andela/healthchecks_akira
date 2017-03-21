@@ -17,6 +17,7 @@ blog_urls = [
         r'(?P<post>[-\w]+)/$',
         views.post_detail,
         name='hc-post-detail'),
+    url(r'^(?P<post_id>\d+)/share/$', views.share_post, name='hc-share-post'),
 ]
 
 channel_urls = [

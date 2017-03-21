@@ -1,4 +1,6 @@
 from django import forms
+from django.utils import timezone
+
 from hc.api.models import Channel, Post
 
 
@@ -43,10 +45,11 @@ class AddWebhookForm(forms.Form):
         return "{value_down}\n{value_up}".format(**self.cleaned_data)
 
 
-class BlogForm(forms.Form):
-    title = forms.CharField(label='Title', max_length=100)
-    content = forms.CharField(label='Content', max_length=5000)
-    tags = forms.CharField(label='Tags', max_length=100)
+class EmailPostForm(forms.Form):
+    name = forms.CharField(max_length=25)
+    email = forms.EmailField()
+    to = forms.EmailField()
+    comments = forms.CharField(required=False, widget=forms.Textarea)
 
     def clean_tags(self):
         l = []
@@ -57,3 +60,29 @@ class BlogForm(forms.Form):
                 l.append(part)
 
         return " ".join(l)
+
+
+# class AddPostForm(forms.Form):
+    # STATUS_CHOICES = (
+    #     ('draft', 'Draft'),
+    #     ('published', 'Published'),
+    # )
+    # title = forms.CharField(max_length=250)
+    # slug = forms.SlugField(max_length=250)
+    # author = forms.CharField(max_length=10)
+    # body = forms.Textarea()
+    # publish = forms.DateTimeField()
+    # created = forms.DateTimeField()
+    # updated = forms.DateTimeField()
+    # status = forms.CharField(max_length=10, choices=STATUS_CHOICES)
+    # tags = forms.CharField(max_length=500)
+
+    # def clean_tags(self):
+    #     l = []
+
+    #     for part in self.cleaned_data["tags"].split(" "):
+    #         part = part.strip()
+    #         if part != "":
+    #             l.append(part)
+
+    #     return " ".join(l)
